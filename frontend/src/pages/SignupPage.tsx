@@ -35,15 +35,6 @@ export default function SignupPage() {
 
         <div className="space-y-4">
           <Input
-            id="email"
-            type="email"
-            label="이메일"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="이메일을 입력하세요"
-          />
-          <Input
             id="name"
             type="text"
             label="이름"
@@ -51,6 +42,15 @@ export default function SignupPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="이름을 입력하세요"
+          />
+          <Input
+            id="email"
+            type="email"
+            label="아이디(이메일)"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="이메일을 입력하세요"
           />
           <Input
             id="password"

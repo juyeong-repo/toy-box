@@ -2,47 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
-/**
- * 글로벌 스타일 정의
- * - Pretendard 계열 폰트 우선 적용 (한국어 최적화)
- * - 전체 배경색: #F3F3F3 (밝은 회색 톤)
- * - 부드러운 폰트 렌더링 적용
- */
 body {
   margin: 0;
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+  font-family: 'Inter', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #F3F3F3;
+  background-color: #F7F8FA;
   color: #1a1a1a;
+  letter-spacing: -0.01em;
 }
 
-/**
- * 재사용 가능한 컴포넌트 스타일 레이어
- * - Tailwind의 @apply를 사용하여 반복되는 스타일 패턴을 클래스로 추출
- * - 이를 통해 컴포넌트 간 일관된 디자인 시스템을 유지
- */
 @layer components {
-  /* 입력 필드 공통 스타일: 밝은 회색 배경, 8px 모서리 */
   .input-field {
-    @apply w-full px-4 py-3 bg-surface-input border border-surface-border
+    @apply w-full px-4 py-3 bg-surface-input border-none
            rounded-input text-sm text-gray-900 placeholder-gray-400
-           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
-           transition-all;
+           focus:outline-none focus:ring-2 focus:ring-primary-500
+           transition-all duration-200;
   }
 
-  /* 기본 버튼 스타일: 보라색 배경, 10px 모서리 */
   .btn-primary {
     @apply w-full flex justify-center py-3 px-4 rounded-button
            text-sm font-semibold text-white
-           bg-primary-600 hover:bg-primary-700
+           bg-primary-400 hover:bg-primary-600
            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500
            disabled:opacity-40 disabled:cursor-not-allowed
            transition-all duration-200;
   }
 
-  /* 보조 버튼 스타일: 테두리만 있는 버튼 */
   .btn-secondary {
     @apply px-4 py-2.5 text-sm font-medium text-gray-600
            border border-surface-border rounded-button
@@ -50,12 +37,10 @@ body {
            transition-all duration-200;
   }
 
-  /* 카드 컨테이너 스타일: 흰색 배경, 16px 모서리, 부드러운 그림자 */
   .card {
     @apply bg-surface-card rounded-card shadow-card;
   }
 
-  /* 폼 에러 메시지 스타일 */
   .error-message {
     @apply bg-red-50 border border-red-200 text-red-600 px-4 py-3
            rounded-input text-sm;

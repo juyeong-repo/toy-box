@@ -36,7 +36,7 @@ export default function LoginPage() {
           <Input
             id="email"
             type="email"
-            label="이메일"
+            label="아이디(이메일)"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}

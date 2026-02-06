@@ -3,43 +3,46 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      /**
-       * 디자인 시스템 색상 정의
-       * - primary: 메인 브랜드 색상 (보라색 #7C3AED 계열)
-       * - surface: 배경/카드 등 표면 색상
-       */
       colors: {
         primary: {
-          50: '#f5f3ff',
-          100: '#ede9fe',
-          200: '#ddd6fe',
-          300: '#c4b5fd',
-          400: '#a78bfa',
-          500: '#8b5cf6',
-          600: '#7C3AED',
-          700: '#6d28d9',
-          800: '#5b21b6',
-          900: '#4c1d95',
+          50: '#eef2ff',
+          100: '#e0e7ff',
+          200: '#c7d2fe',
+          300: '#a5b4fc',
+          400: '#818cf8',
+          500: '#6366F1',
+          600: '#6366F1',
+          700: '#4f46e5',
+          800: '#4338ca',
+          900: '#3730a3',
         },
         surface: {
-          background: '#F3F3F3',
+          background: '#F7F8FA',
           card: '#FFFFFF',
-          input: '#F5F5F7',
-          border: '#E5E5EA',
+          input: '#F0F1F3',
+          border: '#E5E7EB',
         },
       },
       borderRadius: {
         card: '16px',
         input: '8px',
-        button: '10px',
+        button: '8px',
       },
       boxShadow: {
-        card: '0 2px 12px rgba(0, 0, 0, 0.06)',
-        'card-hover': '0 4px 20px rgba(0, 0, 0, 0.1)',
+        card: '0 2px 8px rgba(0, 0, 0, 0.04)',
+        'card-hover': '0 4px 20px rgba(0, 0, 0, 0.08)',
+        'card-drag': '0 12px 28px rgba(0, 0, 0, 0.15)',
+        auth: '0 4px 20px rgba(0, 0, 0, 0.05)',
         modal: '0 8px 32px rgba(0, 0, 0, 0.12)',
       },
       maxWidth: {
         form: '440px',
+      },
+      fontFamily: {
+        sans: ['Inter', 'Pretendard', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+      },
+      letterSpacing: {
+        tighter: '-0.02em',
       },
     },
   },
