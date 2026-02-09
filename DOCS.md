@@ -192,7 +192,7 @@ docker compose up
 #### GET /tasks - 일감 목록 조회
 
 **Query Parameters:**
-- `search` (선택): 검색어 - 제목 또는 생성자 이름으로 필터링
+- `search` (선택): 검색어 - 제목 또는 작성자 이름으로 필터링
 
 **Response (200):**
 ```json
@@ -299,7 +299,7 @@ docker compose up
 | title | VARCHAR | 일감 제목 |
 | status | ENUM (TODO, DOING, DONE) | 일감 상태 |
 | version | INTEGER | 낙관적 잠금용 버전 번호 |
-| creator_id | UUID (FK → User) | 생성자 참조 |
+| creator_id | UUID (FK → User) | 작성자 참조 |
 | createdAt | TIMESTAMP | 생성일시 |
 | updatedAt | TIMESTAMP | 수정일시 |
 
