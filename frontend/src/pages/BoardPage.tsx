@@ -90,12 +90,12 @@ export default function BoardPage() {
       <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-surface-border px-6 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <h1 className="text-lg font-bold text-black uppercase tracking-tighter shrink-0">
-            PROJECT
+            BLOOMING KANBAN
           </h1>
 
           <div className="flex-1 max-w-md ml-auto mr-4">
             <SearchInput
-              placeholder="제목 또는 생성자로 검색..."
+              placeholder="제목 또는 작성자로 검색해주세요."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />

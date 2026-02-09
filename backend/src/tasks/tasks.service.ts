@@ -25,7 +25,7 @@ export class TasksService {
 
   /**
    * 일감 검색
-   * - 제목 또는 생성자 이름에 검색어가 포함된 일감을 조회
+   * - 제목 또는 작성자 이름에 검색어가 포함된 일감을 조회
    * - ILIKE를 사용하여 대소문자 구분 없이 검색
    */
   async search(query: string): Promise<Task[]> {
@@ -41,7 +41,7 @@ export class TasksService {
     );
   }
 
-  /** 일감 생성 - 현재 로그인한 사용자가 생성자로 자동 설정 */
+  /** 일감 생성 - 현재 로그인한 사용자가 작성자로 자동 설정 */
   async create(dto: CreateTaskDto, user: User): Promise<Task> {
     const task = this.em.create(Task, {
       title: dto.title,
@@ -101,7 +101,7 @@ export class TasksService {
   async remove(id: string): Promise<void> {
     const task = await this.em.findOne(Task, { id });
     if (!task) {
-      throw new NotFoundException('일감을 찾을 수 없습니다.');
+      throw new NotFoundException('태스크를 찾을 수 없습니다.');
     }
     await this.em.removeAndFlush(task);
   }

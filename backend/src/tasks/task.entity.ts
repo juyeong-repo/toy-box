@@ -47,8 +47,8 @@ export class Task {
   version!: number;
 
   /**
-   * 일감 생성자 - 로그인한 사용자가 자동으로 설정됨
-   * eager: true로 설정하여 일감 조회 시 생성자 정보도 함께 로드
+   * 태스트 작성자 - 로그인한 사용자가 자동으로 설정됨
+   * eager: true로 설정하여 일감 조회 시 작성자 정보도 함께 로드
    */
   @ManyToOne(() => User, { eager: true })
   creator!: User;
