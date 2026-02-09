@@ -94,7 +94,7 @@ export function useTasks(searchQuery?: string) {
       if (error.response?.status === 409) {
         alert(
           error.response.data.message ||
-            '다른 사용자가 이미 이 일감을 수정했습니다. 최신 데이터를 확인해 주세요.',
+            '다른 사용자가 이미 이 태스크를 수정했습니다. 최신 데이터를 확인해 주세요.',
         );
         queryClient.invalidateQueries({ queryKey: ['tasks'] });
       }

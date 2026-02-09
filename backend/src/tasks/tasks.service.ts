@@ -75,14 +75,14 @@ export class TasksService {
   async update(id: string, dto: UpdateTaskDto): Promise<Task> {
     const task = await this.em.findOne(Task, { id });
     if (!task) {
-      throw new NotFoundException('일감을 찾을 수 없습니다.');
+      throw new NotFoundException('태스크를 찾을 수 없습니다.');
     }
 
     // 낙관적 잠금: 클라이언트가 보낸 version과 현재 DB version 비교
     // version이 일치하지 않으면 다른 사용자가 이미 수정한 것이므로 충돌 반환
     if (task.version !== dto.version) {
       throw new ConflictException(
-        '다른 사용자가 이미 이 일감을 수정했습니다. 최신 데이터를 확인해 주세요.',
+        '다른 사용자가 이미 이 태스크를 수정했습니다. 최신 데이터를 확인해 주세요.',
       );
     }
 

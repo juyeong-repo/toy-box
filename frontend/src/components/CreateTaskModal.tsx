@@ -41,7 +41,7 @@ export default function CreateTaskModal({
             label="제목"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="일감 제목을 입력하세요"
+            placeholder="태스크 제목을 입력하세요"
             maxLength={200}
             autoFocus
           />

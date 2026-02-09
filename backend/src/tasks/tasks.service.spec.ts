@@ -7,7 +7,7 @@ import { User } from '../auth/user.entity';
 
 /**
  * TasksService 단위 테스트
- * - 일감 CRUD 및 동시성 제어(낙관적 잠금) 로직을 테스트
+ * - 태스크 CRUD 및 동시성 제어(낙관적 잠금) 로직을 테스트
  * - EntityManager를 모킹하여 데이터베이스 의존성 격리
  */
 describe('TasksService', () => {
@@ -101,7 +101,7 @@ describe('TasksService', () => {
       em.create.mockReturnValue(mockTask);
 
       const result = await service.create(
-        { title: '테스트 일감' },
+        { title: '테스트 태스크' },
         mockUser,
       );
 

@@ -218,9 +218,13 @@ docker compose up
 **Request Body:**
 ```json
 {
-  "title": "새 일감"
+  "title": "새 일감",
+  "status": "DOING"
 }
 ```
+
+- `title` (필수): 일감 제목 (1~200자)
+- `status` (선택): 초기 상태 (TODO | DOING | DONE, 기본값: TODO)
 
 **Response (201):**
 ```json
@@ -256,7 +260,7 @@ docker compose up
 ```json
 {
   "statusCode": 409,
-  "message": "다른 사용자가 이미 이 일감을 수정했습니다. 최신 데이터를 확인해 주세요."
+  "message": "다른 사용자가 이미 이 태스크를 수정했습니다. 최신 데이터를 확인해 주세요."
 }
 ```
 
@@ -268,6 +272,33 @@ docker compose up
   "success": true
 }
 ```
+
+### API 요약표
+
+| 엔드포인트 | 메서드 | 인증 | 설명 | 성공 | 에러 |
+|-----------|--------|------|------|------|------|
+| `/auth/signup` | POST | - | 회원가입 | 201 | 409 (이메일 중복) |
+| `/auth/login` | POST | - | 로그인 | 200 | 401 (인증 실패) |
+| `/auth/me` | GET | JWT | 현재 사용자 조회 | 200 | 401 |
+| `/tasks` | GET | JWT | 일감 목록/검색 | 200 | 401 |
+| `/tasks` | POST | JWT | 일감 생성 | 201 | 400 (유효성), 401 |
+| `/tasks/:id` | PATCH | JWT | 일감 수정 | 200 | 400, 401, 404, 409 (버전 충돌) |
+| `/tasks/:id` | DELETE | JWT | 일감 삭제 | 200 | 401, 404 |
+
+### 유효성 검사 규칙
+
+| DTO | 필드 | 규칙 |
+|-----|------|------|
+| SignupDto | email | 유효한 이메일 형식 (필수) |
+| SignupDto | name | 문자열, 최소 1자 (필수) |
+| SignupDto | password | 문자열, 최소 6자 (필수) |
+| LoginDto | email | 유효한 이메일 형식 (필수) |
+| LoginDto | password | 문자열 (필수) |
+| CreateTaskDto | title | 문자열, 1~200자 (필수) |
+| CreateTaskDto | status | TODO \| DOING \| DONE (선택, 기본값: TODO) |
+| UpdateTaskDto | version | 정수, 1 이상 (필수) |
+| UpdateTaskDto | title | 문자열, 1~200자 (선택) |
+| UpdateTaskDto | status | TODO \| DOING \| DONE (선택) |
 
 ### WebSocket 이벤트
 
@@ -296,7 +327,7 @@ docker compose up
 | 컬럼 | 타입 | 설명 |
 |------|------|------|
 | id | UUID (PK) | 일감 고유 식별자 |
-| title | VARCHAR | 일감 제목 |
+| title | VARCHAR(200) | 일감 제목 (최대 200자) |
 | status | ENUM (TODO, DOING, DONE) | 일감 상태 |
 | version | INTEGER | 낙관적 잠금용 버전 번호 |
 | creator_id | UUID (FK → User) | 작성자 참조 |
@@ -357,12 +388,12 @@ docker compose up
 ```typescript
 // 백엔드 - TasksService.update()
 if (task.version !== dto.version) {
-  throw new ConflictException('다른 사용자가 이미 이 일감을 수정했습니다.');
+  throw new ConflictException('다른 사용자가 이미 이 태스크를 수정했습니다.');
 }
 
 // 프론트엔드 - useTasks 훅의 onError
 if (error.response?.status === 409) {
-  alert('다른 사용자가 이미 이 일감을 수정했습니다.');
+  alert('다른 사용자가 이미 이 태스크를 수정했습니다.');
   queryClient.invalidateQueries({ queryKey: ['tasks'] });
 }
 ```
