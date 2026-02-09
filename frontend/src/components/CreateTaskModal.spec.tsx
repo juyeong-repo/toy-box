@@ -18,8 +18,8 @@ describe('CreateTaskModal', () => {
   it('모달이 정상적으로 렌더링된다.', () => {
     render(<CreateTaskModal onClose={mockOnClose} onSubmit={mockOnSubmit} />);
 
-    expect(screen.getByText('새 일감 만들기')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('일감 제목을 입력하세요')).toBeInTheDocument();
+    expect(screen.getByText('새 태스크 만들기')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('태스크 제목을 입력하세요')).toBeInTheDocument();
     expect(screen.getByText('생성')).toBeInTheDocument();
     expect(screen.getByText('취소')).toBeInTheDocument();
   });
@@ -28,11 +28,11 @@ describe('CreateTaskModal', () => {
     const user = userEvent.setup();
     render(<CreateTaskModal onClose={mockOnClose} onSubmit={mockOnSubmit} />);
 
-    const input = screen.getByPlaceholderText('일감 제목을 입력하세요');
-    await user.type(input, '새 일감');
+    const input = screen.getByPlaceholderText('태스크 제목을 입력하세요');
+    await user.type(input, '새 태스크');
     await user.click(screen.getByText('생성'));
 
-    expect(mockOnSubmit).toHaveBeenCalledWith('새 일감');
+    expect(mockOnSubmit).toHaveBeenCalledWith('새 태스크');
   });
 
   it('빈 제목으로는 생성할 수 없다.', async () => {

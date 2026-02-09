@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import type { Task, TaskStatus } from '../types';
+import ConfirmModal from './ui/ConfirmModal';
 
 interface TaskCardProps {
   task: Task;
@@ -22,6 +23,7 @@ export default function TaskCard({
 }: TaskCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: task.id,
@@ -50,8 +52,13 @@ export default function TaskCard({
     setIsEditing(false);
   };
 
-  const handleDelete = async () => {
-    if (onDelete && window.confirm('이 일감을 삭제하시겠습니까?')) {
+  const handleDelete = () => {
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    setShowDeleteConfirm(false);
+    if (onDelete) {
       await onDelete(task.id);
     }
   };
@@ -70,21 +77,27 @@ export default function TaskCard({
     >
       <div className="flex items-start justify-between gap-2">
         {isEditing ? (
-          <input
-            type="text"
-            value={editTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
-            onBlur={handleTitleSave}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleTitleSave();
-              if (e.key === 'Escape') {
-                setEditTitle(task.title);
-                setIsEditing(false);
-              }
-            }}
-            className="flex-1 px-2 py-1 bg-surface-input rounded-input text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-            autoFocus
-          />
+          <div className="flex-1">
+            <input
+              type="text"
+              value={editTitle}
+              maxLength={200}
+              onChange={(e) => setEditTitle(e.target.value)}
+              onBlur={handleTitleSave}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleTitleSave();
+                if (e.key === 'Escape') {
+                  setEditTitle(task.title);
+                  setIsEditing(false);
+                }
+              }}
+              className="w-full px-2 py-1 bg-surface-input rounded-input text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+              autoFocus
+            />
+            <span className={`text-[11px] mt-0.5 block text-right ${editTitle.length >= 200 ? 'text-red-500' : 'text-gray-400'}`}>
+              {editTitle.length}/200
+            </span>
+          </div>
         ) : (
           <p
             className="flex-1 text-sm font-medium text-gray-800 leading-relaxed cursor-pointer"
@@ -93,6 +106,9 @@ export default function TaskCard({
               setIsEditing(true);
             }}
           >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block mr-1.5 -mt-0.5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
             {task.title}
           </p>
         )}
@@ -104,7 +120,7 @@ export default function TaskCard({
               handleDelete();
             }}
             onPointerDown={(e) => e.stopPropagation()}
-            className="text-gray-300 hover:text-gray-500 transition-colors shrink-0 mt-0.5"
+            className="text-gray-300 hover:text-gray-600 hover:bg-gray-200 rounded p-0.5 transition-colors shrink-0 mt-0.5"
             aria-label="삭제"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -116,9 +132,20 @@ export default function TaskCard({
 
       <div className="mt-3">
         <span className="text-[11px] text-gray-400">
-          {task.creator.name}
+          담당자 : {task.creator.name}
         </span>
       </div>
+
+      {showDeleteConfirm && (
+        <ConfirmModal
+          title="태스크 삭제"
+          message="이 태스크를 삭제하시겠습니까?"
+          confirmLabel="삭제"
+          cancelLabel="취소"
+          onConfirm={confirmDelete}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
+      )}
     </div>
   );
 }

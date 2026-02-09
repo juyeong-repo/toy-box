@@ -2,7 +2,7 @@ import { type ReactNode } from 'react';
 
 interface AuthLayoutProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   children: ReactNode;
 }
 
@@ -21,7 +21,7 @@ export default function AuthLayout({
           <p className="mt-2 text-sm text-gray-400">{subtitle}</p>
         </div>
 
-        <div className="bg-white rounded-card shadow-auth p-8">{children}</div>
+        <div className="bg-white rounded-card shadow-auth p-5 sm:p-8">{children}</div>
       </div>
     </div>
   );

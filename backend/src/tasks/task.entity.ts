@@ -31,7 +31,7 @@ export class Task {
   @PrimaryKey({ type: 'uuid' })
   id: string = randomUUID();
 
-  @Property()
+  @Property({ length: 200 })
   title!: string;
 
   @Enum(() => TaskStatus)

@@ -45,7 +45,7 @@ export class TasksService {
   async create(dto: CreateTaskDto, user: User): Promise<Task> {
     const task = this.em.create(Task, {
       title: dto.title,
-      status: TaskStatus.TODO,
+      status: dto.status ?? TaskStatus.TODO,
       creator: user,
     });
     await this.em.persistAndFlush(task);

@@ -16,7 +16,6 @@ import KanbanColumn from '../components/KanbanColumn';
 import TaskCard from '../components/TaskCard';
 import CreateTaskModal from '../components/CreateTaskModal';
 import SearchInput from '../components/ui/SearchInput';
-import Button from '../components/ui/Button';
 import type { Task, TaskStatus } from '../types';
 
 const COLUMNS: { id: TaskStatus; title: string }[] = [
@@ -27,7 +26,7 @@ const COLUMNS: { id: TaskStatus; title: string }[] = [
 
 export default function BoardPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [createForStatus, setCreateForStatus] = useState<TaskStatus | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const { tasks, isLoading, createTask, updateTask, deleteTask } =
@@ -87,28 +86,20 @@ export default function BoardPage() {
 
   return (
     <div className="min-h-screen bg-surface-background">
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-surface-border px-6 py-3.5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-surface-border px-4 sm:px-6 py-3.5">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-lg font-bold text-black uppercase tracking-tighter shrink-0">
             BLOOMING KANBAN
           </h1>
 
-          <div className="flex-1 max-w-md ml-auto mr-4">
-            <SearchInput
-              placeholder="제목 또는 작성자로 검색해주세요."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-3 shrink-0 order-2 sm:order-3">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
                 <span className="text-sm font-semibold text-primary-700">
                   {user?.name?.charAt(0)}
                 </span>
               </div>
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-gray-700 hidden sm:inline">
                 {user?.name}
               </span>
             </div>
@@ -119,19 +110,18 @@ export default function BoardPage() {
               로그아웃
             </button>
           </div>
+
+          <div className="w-full sm:w-auto sm:flex-1 sm:max-w-md order-3 sm:order-2">
+            <SearchInput
+              placeholder="제목 또는 작성자로 검색해주세요."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto p-6">
-        <div className="mb-6 flex justify-end">
-          <Button
-            className="w-auto px-5 py-2.5"
-            onClick={() => setIsCreateModalOpen(true)}
-          >
-            + 새 일감
-          </Button>
-        </div>
-
+      <main className="max-w-7xl mx-auto p-4 sm:p-6">
         {isLoading ? (
           <div className="flex justify-center py-20">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
@@ -143,7 +133,7 @@ export default function BoardPage() {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           >
-            <div className="grid grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
               {COLUMNS.map((column) => (
                 <KanbanColumn
                   key={column.id}
@@ -152,6 +142,7 @@ export default function BoardPage() {
                   tasks={tasksByStatus[column.id]}
                   onUpdateTask={updateTask}
                   onDeleteTask={deleteTask}
+                  onCreateTask={() => setCreateForStatus(column.id)}
                 />
               ))}
             </div>
@@ -165,12 +156,12 @@ export default function BoardPage() {
         )}
       </main>
 
-      {isCreateModalOpen && (
+      {createForStatus && (
         <CreateTaskModal
-          onClose={() => setIsCreateModalOpen(false)}
+          onClose={() => setCreateForStatus(null)}
           onSubmit={async (title) => {
-            await createTask(title);
-            setIsCreateModalOpen(false);
+            await createTask({ title, status: createForStatus });
+            setCreateForStatus(null);
           }}
         />
       )}

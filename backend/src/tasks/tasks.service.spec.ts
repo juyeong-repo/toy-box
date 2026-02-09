@@ -24,7 +24,7 @@ describe('TasksService', () => {
 
   const mockTask: Task = {
     id: 'task-1',
-    title: '테스트 일감',
+    title: '테스트 TASK',
     status: TaskStatus.TODO,
     version: 1,
     creator: mockUser,
@@ -54,7 +54,7 @@ describe('TasksService', () => {
   });
 
   describe('findAll', () => {
-    it('모든 일감을 생성일 기준 오름차순으로 반환한다.', async () => {
+    it('모든 태스크를 생성일 기준 오름차순으로 반환한다.', async () => {
       em.find.mockResolvedValue([mockTask]);
 
       const result = await service.findAll();
@@ -69,7 +69,7 @@ describe('TasksService', () => {
   });
 
   describe('search', () => {
-    it('검색어가 제목에 포함된 일감을 반환한다.', async () => {
+    it('검색어가 제목에 포함된 태스크를 반환한다.', async () => {
       em.find.mockResolvedValue([mockTask]);
 
       const result = await service.search('테스트');
@@ -97,7 +97,7 @@ describe('TasksService', () => {
   });
 
   describe('create', () => {
-    it('새 일감을 생성하고 반환한다.', async () => {
+    it('새 태스크를 생성하고 반환한다.', async () => {
       em.create.mockReturnValue(mockTask);
 
       const result = await service.create(
@@ -111,7 +111,7 @@ describe('TasksService', () => {
   });
 
   describe('update', () => {
-    it('version이 일치하면 일감을 정상적으로 수정한다.', async () => {
+    it('version이 일치하면 태스크를 정상적으로 수정한다.', async () => {
       const task = { ...mockTask, version: 1 };
       em.findOne.mockResolvedValue(task);
 
@@ -137,11 +137,11 @@ describe('TasksService', () => {
           title: '수정 시도',
         }),
       ).rejects.toThrow(
-        '다른 사용자가 이미 이 일감을 수정했습니다. 최신 데이터를 확인해 주세요.',
+        '다른 사용자가 이미 이 태스크를 수정했습니다. 최신 데이터를 확인해 주세요.',
       );
     });
 
-    it('존재하지 않는 일감을 수정하려고 하면 NotFoundException이 발생한다.', async () => {
+    it('존재하지 않는 태스크를 수정하려고 하면 NotFoundException이 발생한다.', async () => {
       em.findOne.mockResolvedValue(null);
 
       await expect(
@@ -149,7 +149,7 @@ describe('TasksService', () => {
           version: 1,
           title: '수정 시도',
         }),
-      ).rejects.toThrow('일감을 찾을 수 없습니다.');
+      ).rejects.toThrow('태스크를 찾을 수 없습니다.');
     });
 
     it('제목만 수정하면 상태는 변경되지 않는다.', async () => {
@@ -185,7 +185,7 @@ describe('TasksService', () => {
   });
 
   describe('remove', () => {
-    it('존재하는 일감을 정상적으로 삭제한다.', async () => {
+    it('존재하는 태스크를 정상적으로 삭제한다.', async () => {
       em.findOne.mockResolvedValue(mockTask);
 
       await service.remove('task-1');
@@ -193,11 +193,11 @@ describe('TasksService', () => {
       expect(em.removeAndFlush).toHaveBeenCalledWith(mockTask);
     });
 
-    it('존재하지 않는 일감을 삭제하려고 하면 NotFoundException이 발생한다.', async () => {
+    it('존재하지 않는 태스크를 삭제하려고 하면 NotFoundException이 발생한다.', async () => {
       em.findOne.mockResolvedValue(null);
 
       await expect(service.remove('nonexistent')).rejects.toThrow(
-        '일감을 찾을 수 없습니다.',
+        '태스크를 찾을 수 없습니다.',
       );
     });
   });

@@ -9,7 +9,6 @@ import type { AuthResponse, User } from '../types';
  * 인증 관련 커스텀 훅
  * - 회원가입, 로그인, 로그아웃 기능 제공
  * - TanStack Query의 useMutation을 사용하여 서버 상태 관리
- * - 인증 성공/실패에 따른 사이드 이펙트 처리
  */
 export function useAuth() {
   const navigate = useNavigate();

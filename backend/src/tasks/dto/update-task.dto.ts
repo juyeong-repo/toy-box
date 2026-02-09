@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsOptional, IsString, Min, MinLength } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 import { TaskStatus } from '../task.entity';
 
 /**
@@ -15,6 +15,7 @@ export class UpdateTaskDto {
   @IsOptional()
   @IsString({ message: '제목은 문자열이어야 합니다.' })
   @MinLength(1, { message: '제목은 최소 1자 이상이어야 합니다.' })
+  @MaxLength(200, { message: '제목은 최대 200자까지 입력할 수 있습니다.' })
   title?: string;
 
   @IsOptional()

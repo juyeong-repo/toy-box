@@ -53,8 +53,8 @@ export function useTasks(searchQuery?: string) {
 
   /** 일감 생성 뮤테이션 */
   const createMutation = useMutation({
-    mutationFn: async (title: string) => {
-      const { data } = await api.post<Task>('/tasks', { title });
+    mutationFn: async ({ title, status }: { title: string; status?: TaskStatus }) => {
+      const { data } = await api.post<Task>('/tasks', { title, status });
       return data;
     },
     onSuccess: () => {

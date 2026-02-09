@@ -33,7 +33,7 @@ export default function CreateTaskModal({
   };
 
   return (
-    <Modal title="새 일감 만들기" onClose={onClose}>
+    <Modal title="새 태스크 만들기" onClose={onClose}>
       <form onSubmit={handleSubmit}>
         <div className="mb-6">
           <Input
@@ -42,6 +42,7 @@ export default function CreateTaskModal({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="일감 제목을 입력하세요"
+            maxLength={200}
             autoFocus
           />
         </div>
