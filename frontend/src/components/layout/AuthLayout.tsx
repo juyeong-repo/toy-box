@@ -13,15 +13,19 @@ export default function AuthLayout({
 }: AuthLayoutProps) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface-background py-12 px-4">
-      <div className="w-full max-w-form space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tighter">
-            {title}
-          </h1>
-          <p className="mt-2 text-sm text-gray-400">{subtitle}</p>
-        </div>
+      <div className="w-full max-w-form">
+        <div className="bg-white rounded-2xl shadow-lg px-8 sm:px-12 py-10 sm:py-14">
+          <div className="text-center mb-10">
+            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+              {title}
+            </h1>
+            {subtitle && (
+              <p className="mt-2 text-sm text-gray-400">{subtitle}</p>
+            )}
+          </div>
 
-        <div className="bg-white rounded-card shadow-auth p-5 sm:p-8">{children}</div>
+          {children}
+        </div>
       </div>
     </div>
   );

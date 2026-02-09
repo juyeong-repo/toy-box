@@ -58,7 +58,7 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(e) => { setEmail(e.target.value); setTouched((p) => ({ ...p, email: true })); }}
-            placeholder="이메일을 입력하세요"
+            placeholder="이메일을 입력해 주세요."
             error={errors.email}
           />
           <Input
@@ -68,7 +68,7 @@ export default function LoginPage() {
             required
             value={password}
             onChange={(e) => { setPassword(e.target.value); setTouched((p) => ({ ...p, password: true })); }}
-            placeholder="비밀번호를 입력하세요"
+            placeholder="비밀번호를 입력해 주세요."
             error={errors.password}
           />
         </div>

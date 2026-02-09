@@ -31,7 +31,7 @@ export default function SignupPage() {
       ? '이름은 공백만으로 구성할 수 없습니다.'
       : undefined,
     email: touched.email && email.length > 0 && !isValidEmail
-      ? '이메일은 @를 포함한 올바른 형식이어야 합니다.'
+      ? '이메일은 @를 포함한 형식이어야 합니다.'
       : undefined,
     password: touched.password && password.length > 0 && password.length < 6
       ? '비밀번호는 6자 이상이어야 합니다.'
@@ -62,7 +62,7 @@ export default function SignupPage() {
             required
             value={name}
             onChange={(e) => { setName(e.target.value); setTouched((p) => ({ ...p, name: true })); }}
-            placeholder="이름을 입력하세요"
+            placeholder="이름을 입력해 주세요."
             error={errors.name}
           />
           <Input
@@ -72,7 +72,7 @@ export default function SignupPage() {
             required
             value={email}
             onChange={(e) => { setEmail(e.target.value); setTouched((p) => ({ ...p, email: true })); }}
-            placeholder="이메일을 입력하세요"
+            placeholder="이메일을 입력해 주세요."
             error={errors.email}
           />
           <Input
@@ -83,7 +83,7 @@ export default function SignupPage() {
             minLength={6}
             value={password}
             onChange={(e) => { setPassword(e.target.value); setTouched((p) => ({ ...p, password: true })); }}
-            placeholder="비밀번호를 입력하세요 (6자 이상)"
+            placeholder="비밀번호를 입력해 주세요."
             error={errors.password}
           />
         </div>

@@ -36,7 +36,7 @@ export default {
         modal: '0 8px 32px rgba(0, 0, 0, 0.12)',
       },
       maxWidth: {
-        form: '440px',
+        form: '660px',
       },
       fontFamily: {
         sans: ['Inter', 'Pretendard', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],

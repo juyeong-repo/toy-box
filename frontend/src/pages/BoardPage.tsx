@@ -11,7 +11,6 @@ import {
 } from '@dnd-kit/core';
 import { useTasks } from '../hooks/useTasks';
 import { useAuth } from '../hooks/useAuth';
-import { useAuthStore } from '../stores/authStore';
 import KanbanColumn from '../components/KanbanColumn';
 import TaskCard from '../components/TaskCard';
 import CreateTaskModal from '../components/CreateTaskModal';
@@ -32,7 +31,6 @@ export default function BoardPage() {
   const { tasks, isLoading, createTask, updateTask, deleteTask } =
     useTasks(searchQuery || undefined);
   const { logout } = useAuth();
-  const user = useAuthStore((s) => s.user);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -86,42 +84,30 @@ export default function BoardPage() {
 
   return (
     <div className="min-h-screen bg-surface-background">
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-surface-border px-4 sm:px-6 py-3.5">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-lg font-bold text-black uppercase tracking-tighter shrink-0">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <header className="flex items-center justify-between gap-4 py-6">
+          <h1 className="text-xl font-bold text-black uppercase tracking-tight shrink-0">
             BLOOMING KANBAN
           </h1>
 
-          <div className="flex items-center gap-3 shrink-0 order-2 sm:order-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
-                <span className="text-sm font-semibold text-primary-700">
-                  {user?.name?.charAt(0)}
-                </span>
-              </div>
-              <span className="text-sm font-medium text-gray-700 hidden sm:inline">
-                {user?.name}
-              </span>
+          <div className="flex items-center gap-4 shrink-0">
+            <div className="w-64">
+              <SearchInput
+                placeholder="검색어를 입력해 주세요."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
             <button
               onClick={logout}
-              className="btn-secondary text-xs px-3 py-1.5"
+              className="text-sm text-gray-500 hover:text-gray-800 underline underline-offset-2 transition-colors whitespace-nowrap"
             >
               로그아웃
             </button>
           </div>
+        </header>
 
-          <div className="w-full sm:w-auto sm:flex-1 sm:max-w-md order-3 sm:order-2">
-            <SearchInput
-              placeholder="제목 또는 작성자로 검색해주세요."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto p-4 sm:p-6">
+        <main className="pb-6">
         {isLoading ? (
           <div className="flex justify-center py-20">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
@@ -154,7 +140,8 @@ export default function BoardPage() {
             </DragOverlay>
           </DndContext>
         )}
-      </main>
+        </main>
+      </div>
 
       {createForStatus && (
         <CreateTaskModal
