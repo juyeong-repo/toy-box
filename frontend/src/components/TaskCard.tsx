@@ -130,10 +130,48 @@ export default function TaskCard({
         )}
       </div>
 
-      <div className="mt-3">
+      <div className="mt-3 flex items-center justify-between">
         <span className="text-[11px] text-gray-400">
           담당자 : {task.creator.name}
         </span>
+
+        {/* Mobile: status change buttons */}
+        {onUpdate && (
+          <div className="md:hidden flex items-center gap-1">
+            {task.status !== 'TODO' && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const prev: Record<string, TaskStatus> = { DOING: 'TODO', DONE: 'DOING' };
+                  onUpdate({ id: task.id, version: task.version, status: prev[task.status] });
+                }}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="p-1 rounded text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                aria-label="이전 상태로"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+            {task.status !== 'DONE' && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const next: Record<string, TaskStatus> = { TODO: 'DOING', DOING: 'DONE' };
+                  onUpdate({ id: task.id, version: task.version, status: next[task.status] });
+                }}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="p-1 rounded text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                aria-label="다음 상태로"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {showDeleteConfirm && (

@@ -45,4 +45,13 @@ body {
     @apply bg-red-50 border border-red-200 text-red-600 px-4 py-3
            rounded-input text-sm;
   }
+
+  .mobile-swipe-container {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .mobile-swipe-container::-webkit-scrollbar {
+    display: none;
+  }
 }

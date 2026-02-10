@@ -14,6 +14,7 @@ interface KanbanColumnProps {
   }) => Promise<Task>;
   onDeleteTask: (id: string) => Promise<void>;
   onCreateTask?: () => void;
+  mobileSwipe?: boolean;
 }
 
 const COLUMN_CONFIG: Record<TaskStatus, { bg: string; overBg: string; titleBg: string }> = {
@@ -43,6 +44,7 @@ export default function KanbanColumn({
   onUpdateTask,
   onDeleteTask,
   onCreateTask,
+  mobileSwipe,
 }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id });
   const config = COLUMN_CONFIG[id];
@@ -50,9 +52,10 @@ export default function KanbanColumn({
   return (
     <div
       ref={setNodeRef}
+      id={`column-${id}`}
       className={`rounded-[12px] p-4 min-h-[520px] transition-all duration-200 ${
         isOver ? config.overBg : config.bg
-      }`}
+      } ${mobileSwipe ? 'snap-center shrink-0 w-[calc(100vw-2rem)] min-w-[calc(100vw-2rem)]' : ''}`}
     >
       <div className="flex items-center mb-4 px-1">
         <span className={`inline-block font-bold text-gray-800 text-sm tracking-tight px-4 py-1.5 rounded-full ${config.titleBg}`}>
