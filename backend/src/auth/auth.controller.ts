@@ -1,8 +1,11 @@
-import { Controller, Post, Body, Get, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { CurrentUser } from './current-user.decorator';
+import { User } from './user.entity';
+import { User as SharedUser, AuthResponse } from '../../../shared/types';
 
 /**
  * 인증 컨트롤러
@@ -15,12 +18,12 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  async signup(@Body() dto: SignupDto) {
+  async signup(@Body() dto: SignupDto): Promise<AuthResponse> {
     return this.authService.signup(dto);
   }
 
   @Post('login')
-  async login(@Body() dto: LoginDto) {
+  async login(@Body() dto: LoginDto): Promise<AuthResponse> {
     return this.authService.login(dto);
   }
 
@@ -31,11 +34,11 @@ export class AuthController {
    */
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async me(@Request() req: any) {
+  async me(@CurrentUser() user: User): Promise<SharedUser> {
     return {
-      id: req.user.id,
-      email: req.user.email,
-      name: req.user.name,
+      id: user.id,
+      email: user.email,
+      name: user.name,
     };
   }
 }

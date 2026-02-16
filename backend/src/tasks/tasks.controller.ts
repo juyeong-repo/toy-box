@@ -8,18 +8,20 @@ import {
   Param,
   Query,
   UseGuards,
-  Request,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { TasksGateway } from './tasks.gateway';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CurrentUser } from '../auth/current-user.decorator';
+import { User } from '../auth/user.entity';
+import { Task } from './task.entity';
 
 /**
- * 일감 컨트롤러
+ * 태스크 컨트롤러
  * - 모든 엔드포인트는 JWT 인증이 필요 (JwtAuthGuard)
- * - 일감 변경 시 WebSocket을 통해 모든 클라이언트에게 실시간 알림
+ * - 태스크 변경 시 WebSocket을 통해 모든 클라이언트에게 알려줌
  */
 @Controller('tasks')
 @UseGuards(JwtAuthGuard)
@@ -30,11 +32,11 @@ export class TasksController {
   ) {}
 
   /**
-   * 일감 목록 조회
+   * 태스크 목록 조회
    * - query 파라미터가 있으면 검색, 없으면 전체 조회
    */
   @Get()
-  async findAll(@Query('search') search?: string) {
+  async findAll(@Query('search') search?: string): Promise<Task[]> {
     if (search && search.trim()) {
       return this.tasksService.search(search.trim());
     }
@@ -47,20 +49,20 @@ export class TasksController {
    * - 생성 후 WebSocket으로 모든 클라이언트에게 알림
    */
   @Post()
-  async create(@Body() dto: CreateTaskDto, @Request() req: any) {
-    const task = await this.tasksService.create(dto, req.user);
+  async create(@Body() dto: CreateTaskDto, @CurrentUser() user: User): Promise<Task> {
+    const task = await this.tasksService.create(dto, user);
     // 실시간 동기화: 새 일감이 생성되었음을 모든 클라이언트에 브로드캐스트
     this.tasksGateway.broadcastTaskUpdate('task:created', task);
     return task;
   }
 
   /**
-   * 일감 수정 (제목 변경, 상태 변경 등)
+   * 태스크 수정 (제목 변경, 상태 변경 등)
    * - 낙관적 잠금: version 필드를 통해 동시성 충돌 감지
-   * - 수정 후 WebSocket으로 모든 클라이언트에게 알림
+   * - 수정 후 WebSocket으로 모든 클라이언트에게 알려줌
    */
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateTaskDto) {
+  async update(@Param('id') id: string, @Body() dto: UpdateTaskDto): Promise<Task> {
     const task = await this.tasksService.update(id, dto);
     // 실시간 동기화: 일감이 수정되었음을 모든 클라이언트에 브로드캐스트
     this.tasksGateway.broadcastTaskUpdate('task:updated', task);
@@ -69,10 +71,10 @@ export class TasksController {
 
   /**
    * 일감 삭제
-   * - 삭제 후 WebSocket으로 모든 클라이언트에게 알림
+   * - 삭제 후 WebSocket으로 모든 클라이언트에게 알려줌
    */
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string): Promise<{ success: boolean }> {
     await this.tasksService.remove(id);
     // 실시간 동기화: 일감이 삭제되었음을 모든 클라이언트에 브로드캐스트
     this.tasksGateway.broadcastTaskUpdate('task:deleted', { id });

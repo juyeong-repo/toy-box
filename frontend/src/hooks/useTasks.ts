@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../lib/axios';
 import { getSocket } from '../lib/socket';
 import type { Task, TaskStatus } from '../types';
 
 /**
- * 일감 관련 커스텀 훅
+ * 태스크 관련 커스텀 훅
  * - TanStack Query로 서버 상태 관리 (목록 조회, 생성, 수정, 삭제)
  * - WebSocket 이벤트 리스너로 실시간 동기화
  *
@@ -16,10 +16,12 @@ import type { Task, TaskStatus } from '../types';
  */
 export function useTasks(searchQuery?: string) {
   const queryClient = useQueryClient();
+  const [conflictMessage, setConflictMessage] = useState<string | null>(null);
 
-  /** 일감 목록 조회 - 검색어가 있으면 서버 사이드 필터링 */
+  /** 태스크 목록 조회 - 검색어가 있으면 서버 사이드 필터링 */
   const tasksQuery = useQuery({
     queryKey: ['tasks', searchQuery || ''],
+
     queryFn: async () => {
       const params = searchQuery ? { search: searchQuery } : {};
       const { data } = await api.get<Task[]>('/tasks', { params });
@@ -30,13 +32,13 @@ export function useTasks(searchQuery?: string) {
   /**
    * WebSocket 이벤트 리스너 설정
    * - task:created, task:updated, task:deleted 이벤트를 수신
-   * - 이벤트 수신 시 일감 목록 캐시를 무효화하여 자동 재조회
+   * - 이벤트 수신 시 태스크 목록 캐시를 무효화하여 자동 재조회
    */
   useEffect(() => {
     const socket = getSocket();
 
     const handleTaskEvent = () => {
-      // 모든 일감 관련 쿼리의 캐시를 무효화하여 최신 데이터로 갱신
+      // 모든 태스크 관련 쿼리의 캐시를 무효화하여 최신 데이터로 갱신
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     };
 
@@ -51,7 +53,7 @@ export function useTasks(searchQuery?: string) {
     };
   }, [queryClient]);
 
-  /** 일감 생성 뮤테이션 */
+  /** 태스크 생성 뮤테이션 */
   const createMutation = useMutation({
     mutationFn: async ({ title, status }: { title: string; status?: TaskStatus }) => {
       const { data } = await api.post<Task>('/tasks', { title, status });
@@ -63,7 +65,7 @@ export function useTasks(searchQuery?: string) {
   });
 
   /**
-   * 일감 수정 뮤테이션
+   * 태스크 수정 뮤테이션
    * - version 필드를 포함하여 낙관적 잠금 적용
    * - 409 Conflict 에러 시 충돌 메시지를 사용자에게 알림
    */
@@ -92,16 +94,16 @@ export function useTasks(searchQuery?: string) {
     onError: (error: any) => {
       // 낙관적 잠금 충돌 시 사용자에게 알림 후 최신 데이터로 갱신
       if (error.response?.status === 409) {
-        alert(
+        setConflictMessage(
           error.response.data.message ||
-            '다른 사용자가 이미 이 태스크를 수정했습니다. 최신 데이터를 확인해 주세요.',
+            '다른 사용자가 먼저 수정했습니다. 새로고침 해주세요.',
         );
         queryClient.invalidateQueries({ queryKey: ['tasks'] });
       }
     },
   });
 
-  /** 일감 삭제 뮤테이션 */
+  /** 태스크 삭제 뮤테이션 */
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       await api.delete(`/tasks/${id}`);
@@ -118,5 +120,7 @@ export function useTasks(searchQuery?: string) {
     updateTask: updateMutation.mutateAsync,
     deleteTask: deleteMutation.mutateAsync,
     isCreating: createMutation.isPending,
+    conflictMessage,
+    clearConflictMessage: () => setConflictMessage(null),
   };
 }

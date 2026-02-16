@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect, useDeferredValue } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -14,6 +14,7 @@ import { useAuth } from '../hooks/useAuth';
 import KanbanColumn from '../components/KanbanColumn';
 import TaskCard from '../components/TaskCard';
 import CreateTaskModal from '../components/CreateTaskModal';
+import AlertModal from '../components/ui/AlertModal';
 import SearchInput from '../components/ui/SearchInput';
 import type { Task, TaskStatus } from '../types';
 
@@ -25,13 +26,21 @@ const COLUMNS: { id: TaskStatus; title: string }[] = [
 
 export default function BoardPage() {
   const [searchQuery, setSearchQuery] = useState('');
+  /**
+   * 검색 디바운싱: useDeferredValue로 검색어의 API 전달을 지연
+   * - 사용자가 빠르게 타이핑하는 동안에는 이전 결과를 유지하고
+   *   입력이 멈추면 최신 검색어로 API 호출
+   * - 매 키 입력마다 GET /tasks?search= 요청이 발생하는 것을 방지
+   * - React 18+의 useDeferredValue를 사용하여 별도 타이머 없이 자연스러운 디바운싱 구현
+   */
+  const deferredSearchQuery = useDeferredValue(searchQuery);
   const [createForStatus, setCreateForStatus] = useState<TaskStatus | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [activeColumnIndex, setActiveColumnIndex] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const { tasks, isLoading, createTask, updateTask, deleteTask } =
-    useTasks(searchQuery || undefined);
+  const { tasks, isLoading, createTask, updateTask, deleteTask, conflictMessage, clearConflictMessage } =
+    useTasks(deferredSearchQuery || undefined);
   const { logout } = useAuth();
 
   const sensors = useSensors(
@@ -233,6 +242,15 @@ export default function BoardPage() {
             await createTask({ title, status: createForStatus });
             setCreateForStatus(null);
           }}
+        />
+      )}
+
+      {conflictMessage && (
+        <AlertModal
+          title="알림"
+          message={conflictMessage}
+          confirmLabel="확인"
+          onConfirm={clearConflictMessage}
         />
       )}
     </div>

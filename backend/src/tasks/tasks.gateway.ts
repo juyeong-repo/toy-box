@@ -4,12 +4,20 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
+import { JwtService } from '@nestjs/jwt';
 import { Server, Socket } from 'socket.io';
+import { TaskEvent, TaskDeletedPayload } from '../../../shared/types';
+import { Task } from './task.entity';
 
 /**
  * WebSocket 게이트웨이 - 실시간 동기화를 위한 WebSocket 서버
  *
- * WebSocket을 선택한 이유:
+ * [인증]
+ * - 클라이언트는 연결 시 auth.token에 JWT 토큰을 포함해야 함
+ * - handleConnection에서 토큰을 검증하고, 유효하지 않으면 즉시 연결을 끊음
+ * - REST API의 JwtAuthGuard와 동일한 JwtService를 사용하여 일관된 인증 처리
+ *
+ * [WebSocket을 선택한 이유]
  * 1. 양방향 통신: 서버에서 클라이언트로 즉시 이벤트를 푸시할 수 있음
  * 2. 낮은 지연시간: HTTP 폴링 대비 실시간성이 뛰어남
  * 3. Socket.IO: 자동 재연결, 폴백(fallback) 메커니즘을 기본 제공
@@ -32,7 +40,29 @@ export class TasksGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server!: Server;
 
+  constructor(private readonly jwtService: JwtService) {}
+
+  /**
+   * 클라이언트 연결 시 JWT 토큰 검증
+   * - auth.token에서 JWT를 추출하여 유효성 확인
+   * - 토큰이 없거나 유효하지 않으면 즉시 연결 해제
+   * - 인증된 사용자만 실시간 이벤트를 수신할 수 있도록 보장
+   */
   handleConnection(client: Socket) {
+    const token = client.handshake.auth?.token;
+
+    if (!token) {
+      client.disconnect();
+      return;
+    }
+
+    try {
+      this.jwtService.verify(token);
+    } catch {
+      client.disconnect();
+      return;
+    }
+
     console.log(`클라이언트 연결: ${client.id}`);
   }
 
@@ -45,7 +75,7 @@ export class TasksGateway implements OnGatewayConnection, OnGatewayDisconnect {
    * - 일감 생성, 수정, 삭제 시 호출
    * - 클라이언트는 이 이벤트를 수신하여 칸반 보드를 갱신
    */
-  broadcastTaskUpdate(event: string, data: any) {
+  broadcastTaskUpdate(event: TaskEvent, data: Task | TaskDeletedPayload) {
     this.server.emit(event, data);
   }
 }

@@ -135,7 +135,12 @@ export default function TaskCard({
           담당자 : {task.creator.name}
         </span>
 
-        {/* Mobile: status change buttons */}
+        {/*
+          Mobile: 상태 변경 버튼 (드래그앤드랍이 불가능한 모바일 환경용)
+          - 이전/다음 상태로 이동하는 화살표 버튼을 제공
+          - 동시성 충돌(409) 시 onUpdate가 reject되므로 .catch()로 처리
+            (에러 자체는 useTasks의 onError에서 conflictMessage로 사용자에게 알림)
+        */}
         {onUpdate && (
           <div className="md:hidden flex items-center gap-1">
             {task.status !== 'TODO' && (
@@ -143,7 +148,7 @@ export default function TaskCard({
                 onClick={(e) => {
                   e.stopPropagation();
                   const prev: Record<string, TaskStatus> = { DOING: 'TODO', DONE: 'DOING' };
-                  onUpdate({ id: task.id, version: task.version, status: prev[task.status] });
+                  onUpdate({ id: task.id, version: task.version, status: prev[task.status] }).catch(() => {});
                 }}
                 onPointerDown={(e) => e.stopPropagation()}
                 className="p-1 rounded text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
@@ -159,7 +164,7 @@ export default function TaskCard({
                 onClick={(e) => {
                   e.stopPropagation();
                   const next: Record<string, TaskStatus> = { TODO: 'DOING', DOING: 'DONE' };
-                  onUpdate({ id: task.id, version: task.version, status: next[task.status] });
+                  onUpdate({ id: task.id, version: task.version, status: next[task.status] }).catch(() => {});
                 }}
                 onPointerDown={(e) => e.stopPropagation()}
                 className="p-1 rounded text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"

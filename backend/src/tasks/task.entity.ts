@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto';
 import { User } from '../auth/user.entity';
 
 /**
- * 일감 상태 ENUM
+ * 상태 ENUM
  * - TODO: 할 일
  * - DOING: 진행 중
  * - DONE: 완료
@@ -15,7 +15,7 @@ export enum TaskStatus {
 }
 
 /**
- * 일감(Task) 엔티티
+ * Task 엔티티
  * - 칸반 보드의 각 카드에 해당하는 데이터 모델
  * - version 필드: 낙관적 잠금(Optimistic Locking)을 위한 버전 관리
  *   - 동시에 여러 사용자가 같은 일감을 수정할 때 발생하는 충돌 감지

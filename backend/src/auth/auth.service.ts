@@ -9,6 +9,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from './user.entity';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
+import { AuthResponse } from '../../../shared/types';
 
 /**
  * 인증 서비스
@@ -30,7 +31,7 @@ export class AuthService {
    * 3. 새 사용자를 생성하고 데이터베이스에 저장
    * 4. JWT 토큰을 발급하여 즉시 로그인 상태로 전환
    */
-  async signup(dto: SignupDto) {
+  async signup(dto: SignupDto): Promise<AuthResponse> {
     const existing = await this.em.findOne(User, { email: dto.email });
     if (existing) {
       throw new ConflictException('이미 가입된 이메일입니다.');
@@ -56,7 +57,7 @@ export class AuthService {
    * 보안: 이메일이 존재하지 않는 경우와 비밀번호가 틀린 경우
    * 동일한 오류 메시지를 반환하여 이메일 존재 여부 노출을 방지
    */
-  async login(dto: LoginDto) {
+  async login(dto: LoginDto): Promise<AuthResponse> {
     const user = await this.em.findOne(User, { email: dto.email });
     if (!user) {
       throw new UnauthorizedException('이메일 또는 비밀번호가 올바르지 않습니다.');
@@ -71,7 +72,7 @@ export class AuthService {
   }
 
   /** 사용자 정보를 기반으로 JWT 토큰 생성 */
-  private generateToken(user: User) {
+  private generateToken(user: User): AuthResponse {
     // JWT payload에 사용자 식별 정보를 포함
     // sub: JWT 표준 클레임으로 사용자 ID를 사용
     const payload = { sub: user.id, email: user.email };
