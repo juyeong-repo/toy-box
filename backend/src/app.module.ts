@@ -3,6 +3,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { MikroORM } from '@mikro-orm/core';
 import { AuthModule } from './auth/auth.module';
 import { TasksModule } from './tasks/tasks.module';
+import { TranslationModule } from './translation/translation.module';
 import mikroOrmConfig from './mikro-orm.config';
 
 /**
@@ -10,12 +11,14 @@ import mikroOrmConfig from './mikro-orm.config';
  * - MikroORM: 데이터베이스 ORM 연결
  * - AuthModule: 사용자 인증 관련 기능 (회원가입, 로그인, JWT)
  * - TasksModule: 일감 CRUD 및 실시간 동기화
+ * - TranslationModule: LLM 기반 실시간 텍스트 번역
  */
 @Module({
   imports: [
     MikroOrmModule.forRoot(mikroOrmConfig),
     AuthModule,
     TasksModule,
+    TranslationModule,
   ],
 })
 export class AppModule implements OnModuleInit {

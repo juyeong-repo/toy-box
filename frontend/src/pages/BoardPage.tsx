@@ -9,6 +9,7 @@ import {
   type DragStartEvent,
   type DragEndEvent,
 } from '@dnd-kit/core';
+import { Link } from 'react-router-dom';
 import { useTasks } from '../hooks/useTasks';
 import { useAuth } from '../hooks/useAuth';
 import KanbanColumn from '../components/KanbanColumn';
@@ -150,6 +151,12 @@ export default function BoardPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
+            <Link
+              to="/translate"
+              className="text-sm text-gray-500 hover:text-gray-800 underline underline-offset-2 transition-colors whitespace-nowrap"
+            >
+              번역
+            </Link>
             <button
               onClick={logout}
               className="hidden md:block text-sm text-gray-500 hover:text-gray-800 underline underline-offset-2 transition-colors whitespace-nowrap"

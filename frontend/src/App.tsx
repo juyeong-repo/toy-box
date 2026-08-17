@@ -4,6 +4,7 @@ import { useAuth } from './hooks/useAuth';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import BoardPage from './pages/BoardPage';
+import TranslatePage from './pages/TranslatePage';
 
 /**
  * 앱 라우터 컴포넌트
@@ -42,6 +43,12 @@ function App() {
         path="/"
         element={
           isAuthenticated ? <BoardPage /> : <Navigate to="/login" replace />
+        }
+      />
+      <Route
+        path="/translate"
+        element={
+          isAuthenticated ? <TranslatePage /> : <Navigate to="/login" replace />
         }
       />
     </Routes>
