@@ -61,6 +61,7 @@ export class TranslationGateway implements OnGatewayConnection {
       });
       client.emit('translation:done', { requestId });
     } catch (error) {
+      console.error(`[translation:${requestId}]`, error);
       client.emit('translation:error', {
         requestId,
         message: error instanceof Error ? error.message : '번역 중 오류가 발생했습니다.',
